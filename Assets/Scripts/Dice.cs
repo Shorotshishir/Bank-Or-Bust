@@ -22,7 +22,11 @@ public class Dice : MonoBehaviour
         {
             result = random.Next(0, 6);
             spriteRenderer.sprite = diceSides[result];
+#if UNITY_ANDROID
+            await UniTask.Delay(5);
+#else
             await UniTask.Delay(10);
+#endif
         }
         return result + 1;
     }
