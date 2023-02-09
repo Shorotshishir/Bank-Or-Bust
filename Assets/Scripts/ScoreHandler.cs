@@ -3,10 +3,8 @@ using UnityEngine;
 
 public class ScoreHandler : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI roundCount;
-    [SerializeField] private TextMeshProUGUI player1;
-    [SerializeField] private TextMeshProUGUI player2;
     [SerializeField] private ScoreScriptable scoreScriptable;
+    [SerializeField] private MainUi mainUi;
 
     private void OnEnable()
     {
@@ -16,12 +14,20 @@ public class ScoreHandler : MonoBehaviour
 
     private void OnUpdateRound(int round)
     {
-        roundCount.SetText($"Round\n{round}");
+       //  roundCount.SetText($"Round\n{round}");
+        scoreScriptable.RoundCount = round;
+        scoreScriptable.RoundUpdate();
+        if (round == 10)
+        {
+            // stop game
+            scoreScriptable.GameOver();
+            // show results
+        }
     }
 
-    private void OnDiceResult(GameObject player, int result)
+    private void OnDiceResult(string playerName, int result)
     {
-        if (player.name.Equals("Player1"))
+        if (playerName.Equals("Player1"))
         {
             if (result == 1)
             {
@@ -32,7 +38,6 @@ public class ScoreHandler : MonoBehaviour
             {
                 scoreScriptable.Player1Score += result;
             }
-            player1.SetText($"{scoreScriptable.Player1Score}");
         }
         else
         {
@@ -45,8 +50,8 @@ public class ScoreHandler : MonoBehaviour
             {
                 scoreScriptable.Player2Score += result;
             }
-            player2.SetText($"{scoreScriptable.Player2Score}");
         }
+        scoreScriptable.ScoreUpdate();
     }
 
     private void OnDisable()

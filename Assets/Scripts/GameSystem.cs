@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class GameSystem : MonoBehaviour
@@ -8,10 +9,13 @@ public class GameSystem : MonoBehaviour
     [SerializeField] private Transform player2;
     [SerializeField] private Dice dice;
 
+    [SerializeField] private MainUi mainUi;
+
     private Transform currentPlayer;
     private int roundCount;
 
-    public static event Action<GameObject, int> Result;
+    // public static event Action<GameObject, int> Result;
+    public static event Action<string, int> Result;
 
     public static event Action<int> Round;
 
@@ -19,10 +23,7 @@ public class GameSystem : MonoBehaviour
 
     private void OnEnable()
     {
-        player1.GetComponent<PlayerHandler>().RollDice += OnPlayerRoll;
-        player1.GetComponent<PlayerHandler>().BankScore += OnBankScore;
-        player2.GetComponent<PlayerHandler>().RollDice += OnPlayerRoll;
-        player2.GetComponent<PlayerHandler>().BankScore += OnBankScore;
+        mainUi.PlayerClickAction += MainUi_PlayerClickAction;
     }
 
     private void Start()
@@ -31,26 +32,46 @@ public class GameSystem : MonoBehaviour
         currentPlayer = player1;
     }
 
-    private void OnBankScore(GameObject player)
+    private async void MainUi_PlayerClickAction(string playerName, string buttonType)
     {
-        OnBankScoreAsync(player).Forget();
-    }
-
-    private async UniTaskVoid OnBankScoreAsync(GameObject player)
-    {
-        if (!rollLock)
+        if (playerName.Equals("Player1"))
         {
-            SwitchPlayer(player);
+            if (buttonType.Equals("Bank"))
+            {
+                ActivatePlayer2();
+            }
+            else if (buttonType.Equals("Roll"))
+            {
+                OnPlayerRollAsync(playerName).Forget();
+            }
         }
-        await UniTask.Yield();
+        else
+        {
+            if (buttonType.Equals("Bank"))
+            {
+                ActivatePlayer1();
+            }
+            else if (buttonType.Equals("Roll"))
+            {
+                OnPlayerRollAsync(playerName).Forget();
+            }
+        }
+        await Task.CompletedTask;
     }
 
-    private void OnPlayerRoll(GameObject player)
+    private void ActivatePlayer2()
     {
-        OnPlayerRollAsync(player).Forget();
+        mainUi.ChangePlayer1Status(false);
+        mainUi.ChangePlayer2Status(true);
+    }
+    private void ActivatePlayer1()
+    {
+        mainUi.ChangePlayer1Status(true);
+        mainUi.ChangePlayer2Status(false);
     }
 
-    private async UniTaskVoid OnPlayerRollAsync(GameObject player)
+
+    private async UniTaskVoid OnPlayerRollAsync(string playerName)
     {
         if (rollLock)
         {
@@ -64,9 +85,9 @@ public class GameSystem : MonoBehaviour
             var result = await dice.RollAsync();
             if (result == 1)
             {
-                SwitchPlayer(player);
+                SwitchPlayer(playerName);
             }
-            Result?.Invoke(player, result);
+            Result?.Invoke(playerName, result);
             roundCount++;
             Round?.Invoke(roundCount);
             rollLock = false;
@@ -74,26 +95,23 @@ public class GameSystem : MonoBehaviour
         await UniTask.Yield();
     }
 
-    private void SwitchPlayer(GameObject player)
+
+
+    private void SwitchPlayer(string playerName)
     {
-        if (player.name.Equals("Player1"))
+        if (playerName.Equals("Player1"))
         {
-            player1.gameObject.SetActive(false);
-            currentPlayer = player2;
+            ActivatePlayer2();
         }
-        else
+        else if(playerName.Equals("Player2"))
         {
-            player2.gameObject.SetActive(false);
-            currentPlayer = player1;
+            ActivatePlayer1();
         }
-        currentPlayer.gameObject.SetActive(true);
     }
+
 
     private void OnDisable()
     {
-        player1.GetComponent<PlayerHandler>().RollDice -= OnPlayerRoll;
-        player1.GetComponent<PlayerHandler>().BankScore -= OnBankScore;
-        player2.GetComponent<PlayerHandler>().RollDice -= OnPlayerRoll;
-        player2.GetComponent<PlayerHandler>().BankScore -= OnBankScore;
+        mainUi.PlayerClickAction += MainUi_PlayerClickAction;
     }
 }
