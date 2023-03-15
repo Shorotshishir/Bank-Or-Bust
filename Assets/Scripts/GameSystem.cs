@@ -5,13 +5,10 @@ using UnityEngine;
 
 public class GameSystem : MonoBehaviour
 {
-    [SerializeField] private Transform player1;
-    [SerializeField] private Transform player2;
     [SerializeField] private Dice dice;
 
     [SerializeField] private MainUi mainUi;
 
-    private Transform currentPlayer;
     private int roundCount;
 
     // public static event Action<GameObject, int> Result;
@@ -24,12 +21,6 @@ public class GameSystem : MonoBehaviour
     private void OnEnable()
     {
         mainUi.PlayerClickAction += MainUi_PlayerClickAction;
-    }
-
-    private void Start()
-    {
-        player2.gameObject.SetActive(false);
-        currentPlayer = player1;
     }
 
     private async void MainUi_PlayerClickAction(string playerName, string buttonType)
