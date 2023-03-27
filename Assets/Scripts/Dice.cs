@@ -18,14 +18,15 @@ public class Dice : MonoBehaviour
     {
         var result = 0;
         var random = new System.Random();
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 20; i++)
         {
             result = random.Next(0, 6);
             spriteRenderer.sprite = diceSides[result];
+
 #if UNITY_ANDROID
-            await UniTask.Delay(5);
+            // await UniTask.Delay(2);
 #else
-            await UniTask.Delay(10);
+            await UniTask.Delay(1000);
 #endif
         }
         return result + 1;
