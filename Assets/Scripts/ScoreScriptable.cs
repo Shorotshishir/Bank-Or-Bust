@@ -29,6 +29,11 @@ public class ScoreScriptable : ScriptableObject
         OnGameOver?.Invoke();
     }
 
+    public string GetStatus()
+    {
+        if (Player1Score == Player2Score) return "Draw!";
+        return Player1Score > Player2Score ? "Winner : Player 1" : "Winner : Player 2";
+    }
 
     public void Reset()
     {

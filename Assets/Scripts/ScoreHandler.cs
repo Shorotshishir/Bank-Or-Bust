@@ -1,4 +1,4 @@
-using TMPro;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class ScoreHandler : MonoBehaviour
@@ -12,6 +12,8 @@ public class ScoreHandler : MonoBehaviour
         GameSystem.Round += OnUpdateRound;
     }
 
+
+    
     private void OnUpdateRound(int round)
     {
        //  roundCount.SetText($"Round\n{round}");
@@ -19,10 +21,16 @@ public class ScoreHandler : MonoBehaviour
         scoreScriptable.RoundUpdate();
         if (round == 10)
         {
-            // stop game
-            scoreScriptable.GameOver();
-            // show results
+            GameOver().Forget();
         }
+    }
+
+    private async UniTaskVoid GameOver()
+    {
+        // wait to show the last hand
+        await UniTask.Delay(1000);
+        // Trigger Gameover scene
+        scoreScriptable.GameOver();
     }
 
     private void OnDiceResult(string playerName, int result)
@@ -32,7 +40,6 @@ public class ScoreHandler : MonoBehaviour
             if (result == 1)
             {
                 scoreScriptable.Player1Score = 0;
-                //Debug.Log($"Bust player 1 !!! {scoreScriptable.Player1Score}");
             }
             else
             {
@@ -44,7 +51,6 @@ public class ScoreHandler : MonoBehaviour
             if (result == 1)
             {
                 scoreScriptable.Player2Score = 0;
-                //Debug.Log($"Bust Player 2!!!{scoreScriptable.Player2Score}");
             }
             else
             {
