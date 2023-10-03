@@ -1,8 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
-using System;
-using System.Collections;
-using System.Threading.Tasks;
 using UnityEngine;
+using Random = System.Random;
 
 public class Dice : MonoBehaviour
 {
@@ -17,18 +15,16 @@ public class Dice : MonoBehaviour
     public async UniTask<int> RollAsync()
     {
         var result = 0;
-        var random = new System.Random();
-        for (int i = 0; i < 20; i++)
-        {
-            result = random.Next(0, 6);
-            spriteRenderer.sprite = diceSides[result];
+        var random = new Random();
+        result = random.Next(0, 6);
 
-#if UNITY_ANDROID
-            // await UniTask.Delay(2);
-#else
-            await UniTask.Delay(1000);
-#endif
+        for (var i = 0; i < 20; i++)
+        {
+            result = UnityEngine.Random.Range(0, 5);
+            spriteRenderer.sprite = diceSides[result];
+            await UniTask.Delay(50);
         }
+
         return result + 1;
     }
 }

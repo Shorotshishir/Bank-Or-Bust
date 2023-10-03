@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Score", menuName = "ScriptableObjects/Score", order = 1)]
@@ -29,13 +27,16 @@ public class ScoreScriptable : ScriptableObject
         OnGameOver?.Invoke();
     }
 
+    public string GetStatus()
+    {
+        if (Player1Score == Player2Score) return "Draw!";
+        return Player1Score > Player2Score ? "Winner : Player 1" : "Winner : Player 2";
+    }
 
-    public void Reset()
+    public void ResetData()
     {
         Player1Score = 0;
         Player2Score = 0;
         RoundCount = 0;
     }
-
-
 }

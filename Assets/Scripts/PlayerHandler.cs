@@ -1,6 +1,5 @@
-using Cysharp.Threading.Tasks;
 using System;
-
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public enum PlayerState
@@ -11,11 +10,10 @@ public enum PlayerState
 
 public class PlayerHandler : MonoBehaviour
 {
+    public int Score { get; set; }
     public event Action<GameObject> RollDice;
 
     public event Action<GameObject> BankScore;
-
-    public int Score { get; set; }
 
     public void Roll()
     {
@@ -24,7 +22,7 @@ public class PlayerHandler : MonoBehaviour
 
     private async UniTaskVoid RollAsync()
     {
-        RollDice?.Invoke(this.gameObject);
+        RollDice?.Invoke(gameObject);
         await UniTask.Yield();
     }
 
@@ -35,7 +33,7 @@ public class PlayerHandler : MonoBehaviour
 
     private async UniTaskVoid BankAsync()
     {
-        BankScore?.Invoke(this.gameObject);
+        BankScore?.Invoke(gameObject);
         await UniTask.Yield();
     }
 }

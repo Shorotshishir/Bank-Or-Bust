@@ -1,6 +1,6 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class GameSystem : MonoBehaviour
@@ -9,44 +9,40 @@ public class GameSystem : MonoBehaviour
 
     [SerializeField] private MainUi mainUi;
 
+    private bool rollLock;
+
     private int roundCount;
-
-    // public static event Action<GameObject, int> Result;
-    public static event Action<string, int> Result;
-
-    public static event Action<int> Round;
-
-    private bool rollLock = false;
 
     private void OnEnable()
     {
         mainUi.PlayerClickAction += MainUi_PlayerClickAction;
     }
 
+    private void OnDisable()
+    {
+        mainUi.PlayerClickAction -= MainUi_PlayerClickAction;
+    }
+
+    // public static event Action<GameObject, int> Result;
+    public static event Action<string, int> Result;
+
+    public static event Action Round;
+
     private async void MainUi_PlayerClickAction(string playerName, string buttonType)
     {
         if (playerName.Equals("Player1"))
         {
             if (buttonType.Equals("Bank"))
-            {
                 ActivatePlayer2();
-            }
-            else if (buttonType.Equals("Roll"))
-            {
-                OnPlayerRollAsync(playerName).Forget();
-            }
+            else if (buttonType.Equals("Roll")) OnPlayerRollAsync(playerName).Forget();
         }
         else
         {
             if (buttonType.Equals("Bank"))
-            {
                 ActivatePlayer1();
-            }
-            else if (buttonType.Equals("Roll"))
-            {
-                OnPlayerRollAsync(playerName).Forget();
-            }
+            else if (buttonType.Equals("Roll")) OnPlayerRollAsync(playerName).Forget();
         }
+
         await Task.CompletedTask;
     }
 
@@ -55,6 +51,7 @@ public class GameSystem : MonoBehaviour
         mainUi.ChangePlayer1Status(false);
         mainUi.ChangePlayer2Status(true);
     }
+
     private void ActivatePlayer1()
     {
         mainUi.ChangePlayer1Status(true);
@@ -74,35 +71,21 @@ public class GameSystem : MonoBehaviour
         {
             rollLock = true;
             var result = await dice.RollAsync();
-            if (result == 1)
-            {
-                SwitchPlayer(playerName);
-            }
+            if (result == 1) SwitchPlayer(playerName);
             Result?.Invoke(playerName, result);
             roundCount++;
-            Round?.Invoke(roundCount);
+            Round?.Invoke();
             rollLock = false;
         }
+
         await UniTask.Yield();
     }
-
 
 
     private void SwitchPlayer(string playerName)
     {
         if (playerName.Equals("Player1"))
-        {
             ActivatePlayer2();
-        }
-        else if(playerName.Equals("Player2"))
-        {
-            ActivatePlayer1();
-        }
-    }
-
-
-    private void OnDisable()
-    {
-        mainUi.PlayerClickAction += MainUi_PlayerClickAction;
+        else if (playerName.Equals("Player2")) ActivatePlayer1();
     }
 }

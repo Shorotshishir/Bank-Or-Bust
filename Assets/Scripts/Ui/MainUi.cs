@@ -1,56 +1,80 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class MainUi : MonoBehaviour
 {
-    private Button Bank1;
-    private Button Bank2;
-
-    private Button Roll1;
-    private Button Roll2;
-
-    private Label Score1;
-    private Label Score2;
-
-    private Label RoundCountL;
-    private Label RoundCountR;
-
-    public event Action<string, string> PlayerClickAction;
     [SerializeField] private ScoreScriptable scoreScriptable;
+    [SerializeField] private UiHandler uiHandler;
+    private Button bank1;
+    private Button bank2;
 
+    private Button roll1;
+    private Button roll2;
+
+    private Label roundCountL;
+    private Label roundCountR;
+
+    private Label score1;
+    private Label score2;
+    
+    public event Action<string, string> PlayerClickAction;
 
     private void OnEnable()
     {
+        uiHandler.OnGameRestart += UiHandlerOnOnGameRestart;
         var uiDocument = GetComponent<UIDocument>();
-        Bank1 = uiDocument.rootVisualElement.Q("Bank1")as Button;
-        Bank2 = uiDocument.rootVisualElement.Q("Bank2")as Button;
-        Roll1 = uiDocument.rootVisualElement.Q("Roll1")as Button;
-        Roll2 = uiDocument.rootVisualElement.Q("Roll2")as Button;
+        bank1 = uiDocument.rootVisualElement.Q("Bank1") as Button;
+        bank2 = uiDocument.rootVisualElement.Q("Bank2") as Button;
+        roll1 = uiDocument.rootVisualElement.Q("Roll1") as Button;
+        roll2 = uiDocument.rootVisualElement.Q("Roll2") as Button;
 
-        Score1 = uiDocument.rootVisualElement.Q<Label>("Score1");
-        Score2 = uiDocument.rootVisualElement.Q<Label>("Score2");
-        RoundCountL = uiDocument.rootVisualElement.Q<Label>("RoundCountL");
-        RoundCountR = uiDocument.rootVisualElement.Q<Label>("RoundCountR");
+        score1 = uiDocument.rootVisualElement.Q<Label>("Score1");
+        score2 = uiDocument.rootVisualElement.Q<Label>("Score2");
+        roundCountL = uiDocument.rootVisualElement.Q<Label>("RoundCountL");
+        roundCountR = uiDocument.rootVisualElement.Q<Label>("RoundCountR");
 
-        Bank1.RegisterCallback<ClickEvent>(OnBank1Click);
-        Bank2.RegisterCallback<ClickEvent>(OnBank2Click);
-        Roll1.RegisterCallback<ClickEvent>(OnRoll1Click);
-        Roll2.RegisterCallback<ClickEvent>(OnRoll2Click);
+        bank1.RegisterCallback<ClickEvent>(OnBank1Click);
+        bank2.RegisterCallback<ClickEvent>(OnBank2Click);
+        roll1.RegisterCallback<ClickEvent>(OnRoll1Click);
+        roll2.RegisterCallback<ClickEvent>(OnRoll2Click);
 
-        ChangePlayer2Status(false);
+        InitialSetup();
 
         scoreScriptable.OnScoreUpdate += ScoreScriptable_ScoreUpdated;
         scoreScriptable.OnGameOver += ScoreScriptable_OnGameOver;
         scoreScriptable.OnRoundUpdate += ScoreScriptable_OnRoundUpdate;
     }
 
+    private void OnDisable()
+    {
+        bank1.UnregisterCallback<ClickEvent>(OnBank1Click);
+        bank2.UnregisterCallback<ClickEvent>(OnBank2Click);
+        roll1.UnregisterCallback<ClickEvent>(OnRoll1Click);
+        roll2.UnregisterCallback<ClickEvent>(OnRoll2Click);
+
+        scoreScriptable.OnGameOver -= ScoreScriptable_OnGameOver;
+        scoreScriptable.OnScoreUpdate -= ScoreScriptable_ScoreUpdated;
+        scoreScriptable.OnRoundUpdate -= ScoreScriptable_OnRoundUpdate;
+    }
+
+
+    private void UiHandlerOnOnGameRestart()
+    {
+        InitialSetup();
+    }
+
+    private void InitialSetup()
+    {
+        ChangePlayer1Status(true);
+        ChangePlayer2Status(false);
+    }
+
+
     private void ScoreScriptable_OnRoundUpdate()
     {
-        RoundCountL.text = $"Round : {scoreScriptable.RoundCount}";
-        RoundCountR.text = $"Round : {scoreScriptable.RoundCount}";
+        roundCountL.text = $"Round : {scoreScriptable.RoundCount}";
+        roundCountR.text = $"Round : {scoreScriptable.RoundCount}";
     }
 
     private void ScoreScriptable_OnGameOver()
@@ -67,21 +91,24 @@ public class MainUi : MonoBehaviour
 
     public void ChangePlayer1Score(int score)
     {
-        Score1.text = $"Score : {score}";
+        score1.text = $"Score : {score}";
     }
+
     public void ChangePlayer2Score(int score)
     {
-        Score2.text = $"Score : {score}";
+        score2.text = $"Score : {score}";
     }
+
     public void ChangePlayer1Status(bool status)
     {
-        Bank1.SetEnabled(status);
-        Roll1.SetEnabled(status);
+        bank1.SetEnabled(status);
+        roll1.SetEnabled(status);
     }
+
     public void ChangePlayer2Status(bool status)
     {
-        Bank2.SetEnabled(status);
-        Roll2.SetEnabled(status);
+        bank2.SetEnabled(status);
+        roll2.SetEnabled(status);
     }
 
     private void OnBank1Click(ClickEvent evt)
@@ -102,16 +129,5 @@ public class MainUi : MonoBehaviour
     private void OnRoll2Click(ClickEvent evt)
     {
         PlayerClickAction?.Invoke("Player2", "Roll");
-    }
-
-    void OnDisable()
-    {
-        Bank1.UnregisterCallback<ClickEvent>(OnBank1Click);
-        Bank2.UnregisterCallback<ClickEvent>(OnBank2Click);
-        Roll1.UnregisterCallback<ClickEvent>(OnRoll1Click);
-        Roll2.UnregisterCallback<ClickEvent>(OnRoll2Click);
-
-        scoreScriptable.OnGameOver -= ScoreScriptable_OnGameOver;
-        scoreScriptable.OnScoreUpdate -= ScoreScriptable_ScoreUpdated;
     }
 }
