@@ -1,22 +1,27 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class UiHandler : MonoBehaviour
 {
     public Transform GameOverUi;
     public Transform MainUi;
+
+    [SerializeField] private ScoreScriptable score;
+
+    
     public event Action OnGameOver;
     public event Action OnGameRestart;
     
-    [SerializeField] private ScoreScriptable score;
-
     private void OnEnable()
     {
         score.OnGameOver += ScoreOnOnGameOver;
     }
 
+    private void OnDisable()
+    {
+        score.OnGameOver -= ScoreOnOnGameOver;
+    }
+    
     private void ScoreOnOnGameOver()
     {
         ShowGameoverUi();

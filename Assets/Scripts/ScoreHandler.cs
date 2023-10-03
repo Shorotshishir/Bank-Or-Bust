@@ -12,17 +12,23 @@ public class ScoreHandler : MonoBehaviour
         GameSystem.Round += OnUpdateRound;
     }
 
+    private void OnDisable()
+    {
+        GameSystem.Result -= OnDiceResult;
+    }
 
-    
+    private void OnDestroy()
+    {
+        scoreScriptable.ResetData();
+    }
+
+
     private void OnUpdateRound()
     {
-       //  roundCount.SetText($"Round\n{round}");
+        //  roundCount.SetText($"Round\n{round}");
         scoreScriptable.RoundCount++;
         scoreScriptable.RoundUpdate();
-        if (scoreScriptable.RoundCount == 10)
-        {
-            GameOver().Forget();
-        }
+        if (scoreScriptable.RoundCount == 10) GameOver().Forget();
     }
 
     private async UniTaskVoid GameOver()
@@ -38,35 +44,18 @@ public class ScoreHandler : MonoBehaviour
         if (playerName.Equals("Player1"))
         {
             if (result == 1)
-            {
                 scoreScriptable.Player1Score = 0;
-            }
             else
-            {
                 scoreScriptable.Player1Score += result;
-            }
         }
         else
         {
             if (result == 1)
-            {
                 scoreScriptable.Player2Score = 0;
-            }
             else
-            {
                 scoreScriptable.Player2Score += result;
-            }
         }
+
         scoreScriptable.ScoreUpdate();
-    }
-
-    private void OnDisable()
-    {
-        GameSystem.Result -= OnDiceResult;
-    }
-
-    private void OnDestroy()
-    {
-        scoreScriptable.ResetData();
     }
 }

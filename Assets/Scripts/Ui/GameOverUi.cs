@@ -4,30 +4,34 @@ using UnityEngine.UIElements;
 
 public class GameOverUi : MonoBehaviour
 {
-
-    private Label winner;
-    private Label status;
+    [SerializeField] private ScoreScriptable scoreScriptable;
+    [SerializeField] private UIDocument uiDocument;
+    [SerializeField] private UiHandler uiHandler;
 
     private Button restartGame;
 
     private StringBuilder sb;
-    
-    [SerializeField] private ScoreScriptable scoreScriptable;
-    [SerializeField] private UIDocument uiDocument;
-    [SerializeField] private UiHandler uiHandler;
-    
+    private Label status;
+
+    private Label winner;
 
 
     private void OnEnable()
     {
         sb = new StringBuilder();
-        restartGame = uiDocument.rootVisualElement.Q("restart")as Button;
+        restartGame = uiDocument.rootVisualElement.Q("restart") as Button;
 
         winner = uiDocument.rootVisualElement.Q<Label>("final_winner");
         status = uiDocument.rootVisualElement.Q<Label>("final_status");
-        
+
         restartGame.RegisterCallback<ClickEvent>(OnRestartClick);
         uiHandler.OnGameOver += ScoreScriptableOnOnGameOver;
+    }
+
+    private void OnDisable()
+    {
+        restartGame.UnregisterCallback<ClickEvent>(OnRestartClick);
+        scoreScriptable.OnGameOver -= ScoreScriptableOnOnGameOver;
     }
 
     private void ScoreScriptableOnOnGameOver()
@@ -54,11 +58,5 @@ public class GameOverUi : MonoBehaviour
     {
         print("Restart Clicked");
         uiHandler.ShowMainUi();
-    }
-
-    private void OnDisable()
-    {
-        restartGame.UnregisterCallback<ClickEvent>(OnRestartClick);
-        scoreScriptable.OnGameOver -= ScoreScriptableOnOnGameOver;
     }
 }

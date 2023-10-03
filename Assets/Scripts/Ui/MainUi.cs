@@ -1,36 +1,33 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class MainUi : MonoBehaviour
 {
+    [SerializeField] private ScoreScriptable scoreScriptable;
+    [SerializeField] private UiHandler uiHandler;
     private Button bank1;
     private Button bank2;
 
     private Button roll1;
     private Button roll2;
 
-    private Label score1;
-    private Label score2;
-
     private Label roundCountL;
     private Label roundCountR;
 
+    private Label score1;
+    private Label score2;
+    
     public event Action<string, string> PlayerClickAction;
-    [SerializeField] private ScoreScriptable scoreScriptable;
-    [SerializeField] private UiHandler uiHandler;
-
 
     private void OnEnable()
     {
         uiHandler.OnGameRestart += UiHandlerOnOnGameRestart;
         var uiDocument = GetComponent<UIDocument>();
-        bank1 = uiDocument.rootVisualElement.Q("Bank1")as Button;
-        bank2 = uiDocument.rootVisualElement.Q("Bank2")as Button;
-        roll1 = uiDocument.rootVisualElement.Q("Roll1")as Button;
-        roll2 = uiDocument.rootVisualElement.Q("Roll2")as Button;
+        bank1 = uiDocument.rootVisualElement.Q("Bank1") as Button;
+        bank2 = uiDocument.rootVisualElement.Q("Bank2") as Button;
+        roll1 = uiDocument.rootVisualElement.Q("Roll1") as Button;
+        roll2 = uiDocument.rootVisualElement.Q("Roll2") as Button;
 
         score1 = uiDocument.rootVisualElement.Q<Label>("Score1");
         score2 = uiDocument.rootVisualElement.Q<Label>("Score2");
@@ -48,6 +45,19 @@ public class MainUi : MonoBehaviour
         scoreScriptable.OnGameOver += ScoreScriptable_OnGameOver;
         scoreScriptable.OnRoundUpdate += ScoreScriptable_OnRoundUpdate;
     }
+
+    private void OnDisable()
+    {
+        bank1.UnregisterCallback<ClickEvent>(OnBank1Click);
+        bank2.UnregisterCallback<ClickEvent>(OnBank2Click);
+        roll1.UnregisterCallback<ClickEvent>(OnRoll1Click);
+        roll2.UnregisterCallback<ClickEvent>(OnRoll2Click);
+
+        scoreScriptable.OnGameOver -= ScoreScriptable_OnGameOver;
+        scoreScriptable.OnScoreUpdate -= ScoreScriptable_ScoreUpdated;
+        scoreScriptable.OnRoundUpdate -= ScoreScriptable_OnRoundUpdate;
+    }
+
 
     private void UiHandlerOnOnGameRestart()
     {
@@ -83,15 +93,18 @@ public class MainUi : MonoBehaviour
     {
         score1.text = $"Score : {score}";
     }
+
     public void ChangePlayer2Score(int score)
     {
         score2.text = $"Score : {score}";
     }
+
     public void ChangePlayer1Status(bool status)
     {
         bank1.SetEnabled(status);
         roll1.SetEnabled(status);
     }
+
     public void ChangePlayer2Status(bool status)
     {
         bank2.SetEnabled(status);
@@ -116,16 +129,5 @@ public class MainUi : MonoBehaviour
     private void OnRoll2Click(ClickEvent evt)
     {
         PlayerClickAction?.Invoke("Player2", "Roll");
-    }
-
-    void OnDisable()
-    {
-        bank1.UnregisterCallback<ClickEvent>(OnBank1Click);
-        bank2.UnregisterCallback<ClickEvent>(OnBank2Click);
-        roll1.UnregisterCallback<ClickEvent>(OnRoll1Click);
-        roll2.UnregisterCallback<ClickEvent>(OnRoll2Click);
-
-        scoreScriptable.OnGameOver -= ScoreScriptable_OnGameOver;
-        scoreScriptable.OnScoreUpdate -= ScoreScriptable_ScoreUpdated;
     }
 }
