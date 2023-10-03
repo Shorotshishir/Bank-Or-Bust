@@ -35,7 +35,7 @@ public class ScoreScriptable : ScriptableObject
         return Player1Score > Player2Score ? "Winner : Player 1" : "Winner : Player 2";
     }
 
-    public void Reset()
+    public void ResetData()
     {
         Player1Score = 0;
         Player2Score = 0;

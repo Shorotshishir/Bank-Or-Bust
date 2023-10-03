@@ -34,5 +34,6 @@ public class UiHandler : MonoBehaviour
         MainUi.gameObject.SetActive(true);
         GameOverUi.gameObject.SetActive(false);
         OnGameRestart?.Invoke();
+        score.ResetData();
     }
 }

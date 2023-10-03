@@ -14,12 +14,12 @@ public class ScoreHandler : MonoBehaviour
 
 
     
-    private void OnUpdateRound(int round)
+    private void OnUpdateRound()
     {
        //  roundCount.SetText($"Round\n{round}");
-        scoreScriptable.RoundCount = round;
+        scoreScriptable.RoundCount++;
         scoreScriptable.RoundUpdate();
-        if (round == 10)
+        if (scoreScriptable.RoundCount == 10)
         {
             GameOver().Forget();
         }
@@ -67,6 +67,6 @@ public class ScoreHandler : MonoBehaviour
 
     private void OnDestroy()
     {
-        scoreScriptable.Reset();
+        scoreScriptable.ResetData();
     }
 }

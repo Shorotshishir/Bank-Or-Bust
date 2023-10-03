@@ -14,7 +14,7 @@ public class GameSystem : MonoBehaviour
     // public static event Action<GameObject, int> Result;
     public static event Action<string, int> Result;
 
-    public static event Action<int> Round;
+    public static event Action Round;
 
     private bool rollLock = false;
 
@@ -80,7 +80,7 @@ public class GameSystem : MonoBehaviour
             }
             Result?.Invoke(playerName, result);
             roundCount++;
-            Round?.Invoke(roundCount);
+            Round?.Invoke();
             rollLock = false;
         }
         await UniTask.Yield();
@@ -100,6 +100,10 @@ public class GameSystem : MonoBehaviour
         }
     }
 
+    private void RestartGame()
+    {
+        
+    }
 
     private void OnDisable()
     {
