@@ -28,7 +28,7 @@ public class AboutUi : MonoBehaviour
 
     private void UpdateAboutUi()
     {
-        appversion.text = Application.version;
+        appversion.text = $"Version: {Application.version}";
         buildnumber.text = string.Empty;
     }
 
