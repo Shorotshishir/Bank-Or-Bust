@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/MainUi.uss?fileID=7433441132597879392&amp;guid=41bf271e5d599354ea1dced66c870733&amp;type=3#MainUi" />
+    <ui:VisualElement style="flex-grow: 1; background-color: rgb(148, 156, 255); align-items: stretch; justify-content: center;">
+        <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); align-items: center; height: 70%; justify-content: center;">
+            <ui:Label tabindex="-1" text="Bank Or Bust" display-tooltip-when-elided="true" name="abt_appname" style="-unity-font-style: bold;" />
+            <ui:Label tabindex="-1" text="Created by : Siratim Mustaquim" display-tooltip-when-elided="true" name="abt_author" />
+            <ui:Label tabindex="-1" display-tooltip-when-elided="true" name="abt_contact" text="Contact : tanzim121@gmail.com" />
+            <ui:Label tabindex="-1" text="Label" display-tooltip-when-elided="true" name="abt_version" />
+            <ui:Label tabindex="-1" display-tooltip-when-elided="true" name="abt_build" />
+        </ui:VisualElement>
+        <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); height: 30%; justify-content: flex-start; align-items: center;">
+            <ui:Button text="To Start" display-tooltip-when-elided="true" name="to_start" class="btn-ui" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
